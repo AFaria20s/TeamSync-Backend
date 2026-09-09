@@ -1,0 +1,19 @@
+# Database
+spring.datasource.url=jdbc:postgresql://localhost:5432/teamsync
+spring.datasource.username=USER_NAME
+spring.datasource.password=PASSWORD
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+# JPA
+# ddl-auto options:
+# validate      - validate schema
+# update        - update schema automatically
+# create-drop   - redo schema a every time
+spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.properties.hibernate.format_sql=true
+
+# App
+spring.application.name=teamsync
+server.port=8080
