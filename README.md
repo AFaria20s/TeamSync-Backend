@@ -63,6 +63,7 @@ TeamSync/
 ├── service/         Business logic layer - all team isolation enforced here
 ├── controller/      REST controllers - HTTP layer only
 ├── dto/             Request and Response DTOs - password_hash never exposed
+├── exceptions/      Custom exceptions that are created for specific actions
 └── security/        JWT service, auth filter, security config, auth utils
 ```
 
@@ -220,7 +221,7 @@ PUT    /api/managers/{id}       Update manager
 DELETE /api/managers/{id}       Delete manager
 ```
 
-### Athletes `[ In Development ]`
+### Athletes 
 ```
 GET    /api/athletes            List athletes in team
 GET    /api/athletes/{id}       Get athlete by id
@@ -282,7 +283,7 @@ GET    /api/disciplines/{id}    Get discipline by id
 
 **1. Clone the repository**
 ```bash
-git clone https://github.com/0x194/TeamSync-Backend.git
+git clone https://github.com/AFaria20s/TeamSync-Backend.git
 cd TeamSync-Backend
 ```
 
@@ -350,6 +351,6 @@ The frontend for TeamSync is being developed separately at [TeamSync-Frontend](h
 
 <div align="center">
 
-Built by [Afonso Oliveira](https://github.com/0x194) - Computer Engineering student at IPVC
+Built by [AFaria20s](https://github.com/AFaria20s) - Computer Engineering student at UNIPVC-ESTG
 
 </div>
