@@ -1,6 +1,7 @@
 package org.afonso.teamsync.service;
 
 import lombok.RequiredArgsConstructor;
+import org.afonso.exceptions.ResourceNotFoundException;
 import org.afonso.teamsync.dto.AthleteRequest;
 import org.afonso.teamsync.entity.Athlete;
 import org.afonso.teamsync.entity.Team;
@@ -45,7 +46,7 @@ public class AthleteService {
 
     public Athlete update(UUID id, AthleteRequest request, UUID teamId) {
         Athlete athlete = athleteRepo.findByIdAndTeam_Id(id, teamId)
-                .orElseThrow(() -> new RuntimeException("Athlete not found or does not belong to your team"));
+                .orElseThrow(() -> new ResourceNotFoundException("Athlete not found or does not belong to your team"));
 
         athlete.setName(request.getName());
         athlete.setBirthDay(request.getBirthDay());
@@ -61,7 +62,7 @@ public class AthleteService {
 
     public void delete(UUID id, UUID teamId) {
         Athlete athlete = athleteRepo.findByIdAndTeam_Id(id, teamId)
-                .orElseThrow(() -> new RuntimeException("Athlete not found or does not belong to your team"));
+                .orElseThrow(() -> new ResourceNotFoundException("Athlete not found or does not belong to your team"));
         athleteRepo.delete(athlete);
     }
 }
