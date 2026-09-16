@@ -12,7 +12,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ManagerService {
     private final ManagerRepository managerRepo;
-
     public List<Manager> getAllByTeam(UUID teamId) {
         return managerRepo.findByTeamId(teamId);
     }

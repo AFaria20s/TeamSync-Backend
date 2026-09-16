@@ -11,7 +11,5 @@ import java.util.UUID;
 
 @Repository
 public interface TeamRepository extends JpaRepository<Team, UUID> {
-    List<Team> findByLocation(String location);
-    List<Team> findByNameContainingIgnoreCase(String name);
-    List<Team> findByCreatedAtAfter(Instant date);
+
 }
