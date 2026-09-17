@@ -56,7 +56,7 @@ public class StaffService {
     }
 
     public Staff update(UUID id, StaffRequest request, UUID teamId) {
-        Staff staff = repo.findByIdAndTeam_Id(id, teamId)
+        Staff staff = (Staff) repo.findByIdAndTeam_Id(id, teamId)
                 .orElseThrow(() -> new ResourceNotFoundException("Staff not found or does not belong to your team"));
 
         if (request.getName() != null) staff.setName(request.getName());
