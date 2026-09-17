@@ -34,6 +34,7 @@ This repository contains the backend only. The frontend is developed separately 
 - **Competition and result tracking** for cycling events and athlete performance.
 - **Discipline catalog** for cycling disciplines used by teams and competitions.
 - **PostgreSQL persistence** through Spring Data JPA and Hibernate.
+- **Generated OpenAPI documentation** with springdoc-openapi and Swagger UI.
 
 ## Tech Stack
 
@@ -46,6 +47,7 @@ This repository contains the backend only. The frontend is developed separately 
 | Persistence | Spring Data JPA, Hibernate |
 | Database | PostgreSQL |
 | Build tool | Maven Wrapper |
+| API docs | springdoc-openapi, Swagger UI |
 | Utilities | Lombok, Bean Validation |
 
 ## Project Structure
@@ -118,9 +120,21 @@ Account creation is planned and already under development. The intended flow is 
 
 ## API Documentation
 
-The full REST API reference is maintained separately in [`docs/api.html`](docs/api.html). A Markdown fallback is also available in [`docs/API.md`](docs/API.md).
+API documentation is generated at runtime with springdoc-openapi.
 
-The README intentionally keeps only project-level information, setup instructions, and development notes so it stays easy to read.
+After starting the application, open:
+
+```text
+http://localhost:8080/swagger-ui.html
+```
+
+The raw OpenAPI specification is available at:
+
+```text
+http://localhost:8080/v3/api-docs
+```
+
+Swagger UI supports JWT-protected endpoints through the `Authorize` button. Login with `/api/auth/login`, then authorize with the returned token before calling protected endpoints.
 
 ## Getting Started
 
@@ -169,6 +183,9 @@ spring.jpa.properties.hibernate.format_sql=true
 
 spring.application.name=teamsync
 server.port=8080
+
+springdoc.api-docs.path=/v3/api-docs
+springdoc.swagger-ui.path=/swagger-ui.html
 
 jwt.secret=replace-with-a-long-random-secret-of-at-least-32-characters
 jwt.expiration=86400000
@@ -220,6 +237,12 @@ The API starts on:
 
 ```text
 http://localhost:8080
+```
+
+Swagger UI starts on:
+
+```text
+http://localhost:8080/swagger-ui.html
 ```
 
 ### 7. Login and Make a Request
