@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TeamSync API Documentation</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-soft: #1f2937;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --border: #374151;
+      --brand: #38bdf8;
+      --green: #22c55e;
+      --yellow: #eab308;
+      --red: #ef4444;
+      --purple: #a78bfa;
+      --code: #020617;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #020617 0%, #0f172a 45%, #111827 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a {
+      color: var(--brand);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 32px 24px;
+      background: rgba(2, 6, 23, 0.82);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+    }
+
+    aside h1 {
+      margin: 0 0 6px;
+      font-size: 1.4rem;
+      line-height: 1.2;
+    }
+
+    aside p {
+      margin: 0 0 24px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    nav a {
+      display: block;
+      padding: 8px 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    nav a:hover {
+      color: var(--text);
+    }
+
+    main {
+      width: 100%;
+      max-width: 1100px;
+      padding: 48px 40px 80px;
+    }
+
+    .hero {
+      padding: 32px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: rgba(17, 24, 39, 0.78);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
+    }
+
+    .hero h2 {
+      margin: 0 0 12px;
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      line-height: 1.05;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 1.08rem;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(31, 41, 55, 0.8);
+      color: var(--text);
+      font-size: 0.88rem;
+    }
+
+    section {
+      margin-top: 42px;
+    }
+
+    h2 {
+      margin: 0 0 16px;
+      font-size: 1.75rem;
+    }
+
+    h3 {
+      margin: 28px 0 12px;
+      font-size: 1.25rem;
+    }
+
+    .card {
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(17, 24, 39, 0.72);
+    }
+
+    .note {
+      border-left: 4px solid var(--brand);
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: rgba(56, 189, 248, 0.1);
+      color: var(--text);
+    }
+
+    .warning {
+      border-left-color: var(--yellow);
+      background: rgba(234, 179, 8, 0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.72);
+    }
+
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: #f8fafc;
+      background: rgba(31, 41, 55, 0.92);
+      font-weight: 650;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    code, pre {
+      font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+    }
+
+    code {
+      color: #bae6fd;
+    }
+
+    pre {
+      margin: 12px 0 0;
+      padding: 16px;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--code);
+      color: #d1d5db;
+      font-size: 0.92rem;
+    }
+
+    .method {
+      display: inline-block;
+      min-width: 68px;
+      padding: 3px 9px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 0.78rem;
+      font-weight: 750;
+      letter-spacing: 0.03em;
+    }
+
+    .get { background: rgba(34, 197, 94, 0.16); color: #86efac; }
+    .post { background: rgba(56, 189, 248, 0.16); color: #7dd3fc; }
+    .put { background: rgba(234, 179, 8, 0.16); color: #fde68a; }
+    .delete { background: rgba(239, 68, 68, 0.16); color: #fca5a5; }
+
+    .resource-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .resource-card {
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: rgba(15, 23, 42, 0.64);
+    }
+
+    .resource-card h3 {
+      margin: 0 0 8px;
+    }
+
+    .resource-card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    footer {
+      margin-top: 56px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    @media (max-width: 860px) {
+      .layout {
+        display: block;
+      }
+
+      aside {
+        position: relative;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+      }
+
+      main {
+        padding: 28px 18px 56px;
+      }
+
+      .hero {
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside>
+      <h1>TeamSync API</h1>
+      <p>REST API reference for the TeamSync backend.</p>
+      <nav>
+        <a href="#overview">Overview</a>
+        <a href="#auth">Authentication</a>
+        <a href="#team">Team</a>
+        <a href="#manager">Manager</a>
+        <a href="#athletes">Athletes</a>
+        <a href="#staff">Staff</a>
+        <a href="#staff-roles">Staff Roles</a>
+        <a href="#sponsors">Sponsors</a>
+        <a href="#competitions">Competitions</a>
+        <a href="#results">Results</a>
+        <a href="#disciplines">Disciplines</a>
+        <a href="#addresses">Addresses</a>
+        <a href="#notes">Current Notes</a>
+      </nav>
+    </aside>
+
+    <main>
+      <header id="overview" class="hero">
+        <h2>TeamSync API Documentation</h2>
+        <p>Current REST API reference for the TeamSync backend. This page documents authentication, team-scoped resources, global resources, and request payload examples.</p>
+        <div class="meta">
+          <span class="pill">Base URL: <code>http://localhost:8080</code></span>
+          <span class="pill">Auth: JWT Bearer Token</span>
+          <span class="pill">Backend: Spring Boot</span>
+        </div>
+      </header>
+
+      <section id="auth">
+        <h2>Authentication</h2>
+        <div class="card">
+          <p>TeamSync currently uses manager-based authentication. A manager logs in with email and password and receives a JWT token.</p>
+          <pre><code>Authorization: Bearer &lt;token&gt;</code></pre>
+          <div class="note warning">
+            Account creation is not publicly available yet. Registration is planned and already under development. The expected flow is to create the first <code>Team</code> and first <code>Manager</code> together, then return a JWT for the new manager.
+          </div>
+          <h3>Login</h3>
+          <table>
+            <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Auth</th></tr></thead>
+            <tbody><tr><td><span class="method post">POST</span></td><td><code>/api/auth/login</code></td><td>Login and receive a JWT token.</td><td>Public</td></tr></tbody>
+          </table>
+          <pre><code>{
+  "email": "manager@example.com",
+  "password": "your-password"
+}</code></pre>
+          <pre><code>{
+  "token": "eyJhbGciOiJIUzI1NiJ9..."
+}</code></pre>
+        </div>
+      </section>
+
+      <section id="team">
+        <h2>Team</h2>
+        <p>Team endpoints operate on the team that belongs to the authenticated manager.</p>
+        <table>
+          <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><span class="method get">GET</span></td><td><code>/api/team</code></td><td>Get the authenticated manager's team.</td></tr>
+            <tr><td><span class="method put">PUT</span></td><td><code>/api/team/update</code></td><td>Update the authenticated manager's team.</td></tr>
+            <tr><td><span class="method delete">DELETE</span></td><td><code>/api/team/delete</code></td><td>Delete the authenticated manager's team.</td></tr>
+          </tbody>
+        </table>
+        <pre><code>{
+  "name": "TeamSync Racing",
+  "acronym": "TSR",
+  "phone": "+351900000000",
+  "foundedYear": 2026,
+  "license": "TEAM-2026-001",
+  "location": "Viana do Castelo, Portugal",
+  "description": "Cycling team focused on road and mountain bike racing."
+}</code></pre>
+      </section>
+
+      <section id="manager">
+        <h2>Manager</h2>
+        <table>
+          <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+          <tbody><tr><td><span class="method get">GET</span></td><td><code>/api/manager</code></td><td>Get the authenticated manager profile.</td></tr></tbody>
+        </table>
+      </section>
+
+      <section id="athletes">
+        <h2>Athletes</h2>
+        <p>Athlete endpoints are scoped to the authenticated manager's team.</p>
+        <table>
+          <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><span class="method get">GET</span></td><td><code>/api/athletes</code></td><td>List athletes from the authenticated team.</td></tr>
+            <tr><td><span class="method get">GET</span></td><td><code>/api/athletes/{id}</code></td><td>Get one athlete from the authenticated team.</td></tr>
+            <tr><td><span class="method post">POST</span></td><td><code>/api/athletes</code></td><td>Create an athlete in the authenticated team.</td></tr>
+            <tr><td><span class="method put">PUT</span></td><td><code>/api/athletes/{id}</code></td><td>Update an athlete in the authenticated team.</td></tr>
+            <tr><td><span class="method delete">DELETE</span></td><td><code>/api/athletes/{id}</code></td><td>Delete an athlete from the authenticated team.</td></tr>
+          </tbody>
+        </table>
+        <pre><code>{
+  "name": "Joana Silva",
+  "birthDay": "2001-04-12",
+  "email": "joana@example.com",
+  "password": "StrongPassword123!",
+  "phone": "+351912345678",
+  "license": "PT-12345",
+  "nationality": "Portugal"
+}</code></pre>
+      </section>
+
+      <section id="staff">
+        <h2>Staff</h2>
+        <p>Staff endpoints are scoped to the authenticated manager's team.</p>
+        <table>
+          <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><span class="method get">GET</span></td><td><code>/api/staff</code></td><td>List staff from the authenticated team.</td></tr>
+            <tr><td><span class="method get">GET</span></td><td><code>/api/staff/{id}</code></td><td>Get one staff member.</td></tr>
+            <tr><td><span class="method post">POST</span></td><td><code>/api/staff</code></td><td>Create a staff member in the authenticated team.</td></tr>
+            <tr><td><span class="method put">PUT</span></td><td><code>/api/staff/{id}</code></td><td>Update a staff member in the authenticated team.</td></tr>
+            <tr><td><span class="method delete">DELETE</span></td><td><code>/api/staff/{id}</code></td><td>Delete a staff member from the authenticated team.</td></tr>
+          </tbody>
+        </table>
+        <pre><code>{
+  "name": "Carlos Mendes",
+  "birthDay": "1988-09-20",
+  "email": "carlos@example.com",
+  "password": "StrongPassword123!",
+  "phone": "+351913000000",
+  "staffRoleId": "00000000-0000-0000-0000-000000000000",
+  "addressId": "00000000-0000-0000-0000-000000000000"
+}</code></pre>
+      </section>
+
+      <section id="staff-roles">
+        <h2>Staff Roles</h2>
+        <p>Staff role endpoints are scoped to the authenticated manager's team.</p>
+        <table>
+          <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><span class="method get">GET</span></td><td><code>/api/staffroles</code></td><td>List staff roles from the authenticated team.</td></tr>
+            <tr><td><span class="method post">POST</span></td><td><code>/api/staffroles</code></td><td>Create a staff role.</td></tr>
+            <tr><td><span class="method put">PUT</span></td><td><code>/api/staffroles/{id}</code></td><td>Update a staff role.</td></tr>
+            <tr><td><span class="method delete">DELETE</span></td><td><code>/api/staffroles/{id}</code></td><td>Delete a staff role.</td></tr>
+          </tbody>
+        </table>
+        <pre><code>{
+  "name": "Coach",
+  "description": "Responsible for training planning and race preparation."
+}</code></pre>
+      </section>
+
+      <section id="sponsors">
+        <h2>Sponsors</h2>
+        <p>Sponsor endpoints are scoped to the authenticated manager's team.</p>
+        <table>
+          <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><span class="method get">GET</span></td><td><code>/api/sponsors</code></td><td>List sponsors from the authenticated team.</td></tr>
+            <tr><td><span class="method get">GET</span></td><td><code>/api/sponsors/{id}</code></td><td>Get one sponsor from the authenticated team.</td></tr>
+            <tr><td><span class="method post">POST</span></td><td><code>/api/sponsors</code></td><td>Create a sponsor for the authenticated team.</td></tr>
+            <tr><td><span class="method put">PUT</span></td><td><code>/api/sponsors/{id}</code></td><td>Update a sponsor from the authenticated team.</td></tr>
+            <tr><td><span class="method delete">DELETE</span></td><td><code>/api/sponsors/{id}</code></td><td>Delete a sponsor from the authenticated team.</td></tr>
+          </tbody>
+        </table>
+        <pre><code>{
+  "addressId": "00000000-0000-0000-0000-000000000000",
+  "name": "ACME Bikes",
+  "email": "partnerships@acme.test",
+  "phone": "+351900000000",
+  "website": "https://example.com",
+  "sponsorType": "Main",
+  "status": true,
+  "startDate": "2026-01-01",
+  "endDate": "2026-12-31"
+}</code></pre>
+      </section>
+
+      <section id="competitions">
+        <h2>Competitions</h2>
+        <p>Competition endpoints currently operate as global resources.</p>
+        <table>
+          <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><span class="method get">GET</span></td><td><code>/api/competitions</code></td><td>List competitions.</td></tr>
+            <tr><td><span class="method get">GET</span></td><td><code>/api/competitions/{id}</code></td><td>Get one competition.</td></tr>
+            <tr><td><span class="method post">POST</span></td><td><code>/api/competitions</code></td><td>Create a competition.</td></tr>
+            <tr><td><span class="method put">PUT</span></td><td><code>/api/competitions/{id}</code></td><td>Update a competition.</td></tr>
+            <tr><td><span class="method delete">DELETE</span></td><td><code>/api/competitions/{id}</code></td><td>Delete a competition.</td></tr>
+          </tbody>
+        </table>
+        <pre><code>{
+  "disciplineId": "00000000-0000-0000-0000-000000000000",
+  "name": "Portuguese XCO Cup - Round 1",
+  "location": "Viana do Castelo",
+  "competitionDate": "2026-03-15"
+}</code></pre>
+      </section>
+
+      <section id="results">
+        <h2>Results</h2>
+        <p>Result endpoints are scoped to the authenticated manager's team.</p>
+        <table>
+          <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><span class="method get">GET</span></td><td><code>/api/results</code></td><td>List results for the authenticated team.</td></tr>
+            <tr><td><span class="method get">GET</span></td><td><code>/api/results/{id}</code></td><td>Get one result from the authenticated team.</td></tr>
+            <tr><td><span class="method post">POST</span></td><td><code>/api/results</code></td><td>Create a result for the authenticated team.</td></tr>
+            <tr><td><span class="method put">PUT</span></td><td><code>/api/results/{id}</code></td><td>Update a result from the authenticated team.</td></tr>
+            <tr><td><span class="method delete">DELETE</span></td><td><code>/api/results/{id}</code></td><td>Delete a result from the authenticated team.</td></tr>
+          </tbody>
+        </table>
+        <pre><code>{
+  "athleteId": "00000000-0000-0000-0000-000000000000",
+  "competitionId": "00000000-0000-0000-0000-000000000000",
+  "position": 3,
+  "finishTime": "01:24:31",
+  "points": 75.50,
+  "dnf": false
+}</code></pre>
+      </section>
+
+      <section id="disciplines">
+        <h2>Disciplines</h2>
+        <p>Discipline endpoints currently operate as global resources.</p>
+        <table>
+          <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><span class="method get">GET</span></td><td><code>/api/disciplines</code></td><td>List disciplines.</td></tr>
+            <tr><td><span class="method get">GET</span></td><td><code>/api/disciplines/{id}</code></td><td>Get one discipline.</td></tr>
+            <tr><td><span class="method post">POST</span></td><td><code>/api/disciplines</code></td><td>Create a discipline.</td></tr>
+            <tr><td><span class="method put">PUT</span></td><td><code>/api/disciplines/{id}</code></td><td>Update a discipline.</td></tr>
+            <tr><td><span class="method delete">DELETE</span></td><td><code>/api/disciplines/{id}</code></td><td>Delete a discipline.</td></tr>
+          </tbody>
+        </table>
+        <pre><code>{
+  "name": "XCO",
+  "description": "Olympic cross-country mountain bike discipline."
+}</code></pre>
+      </section>
+
+      <section id="addresses">
+        <h2>Addresses</h2>
+        <p>Address endpoints currently operate as global resources.</p>
+        <table>
+          <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><span class="method get">GET</span></td><td><code>/api/addresses</code></td><td>List addresses.</td></tr>
+            <tr><td><span class="method get">GET</span></td><td><code>/api/addresses/{id}</code></td><td>Get one address.</td></tr>
+            <tr><td><span class="method post">POST</span></td><td><code>/api/addresses</code></td><td>Create an address.</td></tr>
+            <tr><td><span class="method put">PUT</span></td><td><code>/api/addresses/{id}</code></td><td>Update an address.</td></tr>
+            <tr><td><span class="method delete">DELETE</span></td><td><code>/api/addresses/{id}</code></td><td>Delete an address.</td></tr>
+          </tbody>
+        </table>
+        <pre><code>{
+  "street": "Rua Example 123",
+  "city": "Viana do Castelo",
+  "district": "Viana do Castelo",
+  "postalCode": "4900-000",
+  "country": "Portugal"
+}</code></pre>
+      </section>
+
+      <section id="notes">
+        <h2>Current API Notes</h2>
+        <div class="resource-grid">
+          <div class="resource-card"><h3>Authentication</h3><p>Only <code>/api/auth/**</code> is public. Every other endpoint requires a valid JWT token.</p></div>
+          <div class="resource-card"><h3>Accounts</h3><p>Authentication currently supports manager accounts only. Registration is planned and under development.</p></div>
+          <div class="resource-card"><h3>Team Scope</h3><p>Team-owned resources derive the team from the authenticated manager, not from request bodies.</p></div>
+          <div class="resource-card"><h3>Global Resources</h3><p>Disciplines, competitions, and addresses currently operate as global resources.</p></div>
+        </div>
+      </section>
+
+      <footer>
+        TeamSync API Documentation. Keep this file aligned with the Spring controllers when endpoints change.
+      </footer>
+    </main>
+  </div>
+</body>
+</html>

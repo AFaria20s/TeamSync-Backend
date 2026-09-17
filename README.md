@@ -1,356 +1,293 @@
 <div align="center">
 
-<img src="https://img.shields.io/badge/TeamSync-Backend-1a1a2e?style=for-the-badge&logo=spring&logoColor=white" alt="TeamSync"/>
+<img src="src/main/resources/static/logo_teamsync.png" alt="TeamSync logo" width="140" />
 
 # TeamSync Backend
 
-**Professional cycling team management system built for real teams, built to scale.**
+A Spring Boot REST API for managing cycling teams, athletes, staff, sponsors, competitions, and results.
 
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.1-6DB33F?style=flat-square&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
-[![Java](https://img.shields.io/badge/Java-26-ED8B00?style=flat-square&logo=openjdk&logoColor=white)](https://openjdk.org/)
+[![Java](https://img.shields.io/badge/Java-21-ED8B00?style=flat-square&logo=openjdk&logoColor=white)](https://openjdk.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-316192?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-[![JWT](https://img.shields.io/badge/JWT-Auth-000000?style=flat-square&logo=jsonwebtokens&logoColor=white)](https://jwt.io/)
+[![Security](https://img.shields.io/badge/Auth-JWT-black?style=flat-square&logo=jsonwebtokens&logoColor=white)](https://jwt.io/)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-In%20Development-orange?style=flat-square)]()
-
----
-
-[Features](#features) · [Architecture](#architecture) · [Entities](#entities) · [Security](#security) · [API](#api-endpoints) · [Setup](#setup)
 
 </div>
 
 ---
 
-## What is TeamSync?
+## Overview
 
-TeamSync is a REST API backend for managing cycling teams - athletes, staff, competitions, results, sponsors, and disciplines - with multi-team support and role-based access control. Built from a real need: most teams still manage everything in Excel or paper.
+TeamSync is the backend API for a cycling team management platform. It is designed to keep a team's operational data in one place: team profile, managers, athletes, staff members, staff roles, addresses, sponsors, disciplines, competitions, and race results.
 
-Designed to be the backbone of a full-stack management platform, with clean separation between teams, strict data isolation, and JWT-based authentication.
+The project focuses on a simple but important rule: authenticated users only work with data from their own team. The current authentication flow is manager-based, using Spring Security and JWT tokens. After login, the backend uses the authenticated manager's team to scope team-owned resources such as athletes, staff, sponsors, staff roles, and results.
 
----
+This repository contains the backend only. The frontend is developed separately at [TeamSync-Frontend](https://github.com/AFaria20s/TeamSync-Frontend).
 
-## Features
+## Main Features
 
-**Team Management**
-- Full CRUD for team profile, disciplines, and organizational structure
-- Multi-team architecture - one platform, isolated data per team
-- Sponsor management with contract tracking and status
+- **JWT authentication** for manager login and stateless API requests.
+- **Team-scoped data access** for the main business resources.
+- **Athlete management** with profile, contact, license, nationality, and account data.
+- **Staff management** with custom team-specific staff roles.
+- **Sponsor management** with contact details, type, status, and contract dates.
+- **Competition and result tracking** for cycling events and athlete performance.
+- **Discipline catalog** for cycling disciplines used by teams and competitions.
+- **PostgreSQL persistence** through Spring Data JPA and Hibernate.
 
-**Athlete & Staff Management**
-- Athlete profiles with license, nationality, and discipline assignments
-- Staff roles - custom per team (Coach, Mechanic, Physiotherapist, and more)
-- Many-to-many discipline assignments for athletes competing in multiple categories
+## Tech Stack
 
-**Competition & Results** `[ In Development ]`
-- Competition registry with discipline and location tracking
-- Result recording per athlete per competition - position, time, points, DNF status
-- Team performance overview across the season
+| Area | Technology |
+| --- | --- |
+| Language | Java 21 |
+| Framework | Spring Boot 4.1.1 |
+| API | Spring Web MVC |
+| Security | Spring Security, JWT, BCrypt |
+| Persistence | Spring Data JPA, Hibernate |
+| Database | PostgreSQL |
+| Build tool | Maven Wrapper |
+| Utilities | Lombok, Bean Validation |
 
-**Authentication & Security**
-- JWT-based stateless authentication
-- Role-based access control - Manager, Staff, Athlete
-- Complete data isolation per team - no cross-team data leakage
-- BCrypt password hashing
+## Project Structure
 
----
+```text
+src/main/java/org/afonso/teamsync
+├── controller/      REST endpoints
+├── dto/             Request and response payload models
+├── entity/          JPA entities mapped to database tables
+├── repository/      Spring Data repositories
+├── security/        JWT, authentication filter, and security config
+└── service/         Business logic and team-scoped operations
 
-## Architecture
-
-```
-TeamSync/
-├── entity/          Entity classes mapped to PostgreSQL tables
-├── repository/      Spring Data JPA repositories
-├── service/         Business logic layer - all team isolation enforced here
-├── controller/      REST controllers - HTTP layer only
-├── dto/             Request and Response DTOs - password_hash never exposed
-├── exceptions/      Custom exceptions that are created for specific actions
-└── security/        JWT service, auth filter, security config, auth utils
-```
-
-**Request lifecycle:**
-
-```
-Client Request
-      ↓
-JwtAuthFilter        Extracts and validates Bearer token
-      ↓
-SecurityConfig       Checks role permissions for the endpoint
-      ↓
-Controller           Extracts team_id from authenticated principal via AuthUtils
-      ↓
-Service              Filters all queries by team_id - never returns cross-team data
-      ↓
-Repository           Spring Data JPA - executes filtered query against PostgreSQL
-      ↓
-Response             DTO returned - sensitive fields excluded
+src/main/java/org/afonso/exceptions
+└── Global exception handling and custom exceptions
 ```
 
----
+## Domain Model
 
-## Entities
+TeamSync currently works with these main resources:
 
-**Team**
-Central entity. Every piece of data in the system belongs to a team. Managers authenticate against their team.
+| Resource | Purpose |
+| --- | --- |
+| `Team` | Stores the team profile, including name, acronym, license, phone, location, and description. |
+| `Manager` | Authenticated account type used to access the API. Managers belong to a team. |
+| `Athlete` | Rider profile with email, password, phone, license, nationality, and team relationship. |
+| `Staff` | Team staff member with account information, contact details, address, and staff role. |
+| `StaffRole` | Custom role defined by each team, such as coach, mechanic, or physiotherapist. |
+| `Sponsor` | Team sponsor profile with contact information, type, status, and contract period. |
+| `Address` | Reusable address information for people and sponsors. |
+| `Discipline` | Cycling discipline such as road, XCO, XCC, DHI, or time trial. |
+| `Competition` | Race or event with name, location, date, and discipline. |
+| `Result` | Athlete result in a competition, including position, finish time, points, and DNF state. |
 
-| Field | Type | Description |
-|---|---|---|
-| team_id | UUID | Primary key |
-| name | VARCHAR(200) | Full team name |
-| acronym | VARCHAR(20) | Short identifier |
-| license | VARCHAR(100) | Federation license number |
-| founded_year | INT | Year the team was founded |
-| location | VARCHAR(200) | Team base location |
-| disciplines | Many-to-many | Disciplines the team competes in |
+## Authentication
 
-**Manager**
-Authenticates as `ROLE_MANAGER`. Full access to team data.
+Only `/api/auth/**` is public. Every other endpoint requires a valid JWT token.
 
-| Field | Type | Description |
-|---|---|---|
-| manager_id | UUID | Primary key |
-| team_id | UUID | Foreign key to Team |
-| name | VARCHAR(150) | Full name |
-| email | VARCHAR(100) | Login email (unique) |
-| password_hash | VARCHAR(255) | BCrypt hash - never exposed in responses |
-| birth_day | DATE | Date of birth |
-| address_id | UUID | Foreign key to Address (lazy) |
+Login request:
 
-**Athlete** `[ In Development ]`
-Authenticates as `ROLE_ATHLETE`. Access limited to own data and results.
-
-| Field | Type | Description |
-|---|---|---|
-| athlete_id | UUID | Primary key |
-| team_id | UUID | Foreign key to Team |
-| name | VARCHAR(150) | Full name |
-| email | VARCHAR(100) | Login email (unique) |
-| license | VARCHAR(100) | Federation license number |
-| nationality | VARCHAR(100) | Default: Portugal |
-| disciplines | Many-to-many | Disciplines the athlete competes in |
-
-**Staff** `[ In Development ]`
-Authenticates as `ROLE_STAFF`. Access to athletes and competitions, no financial data.
-
-| Field | Type | Description |
-|---|---|---|
-| staff_id | UUID | Primary key |
-| team_id | UUID | Foreign key to Team |
-| staff_role_id | UUID | Foreign key to StaffRole |
-| name | VARCHAR(150) | Full name |
-| email | VARCHAR(100) | Login email (unique) |
-
-**StaffRole** `[ In Development ]`
-Custom roles per team - Coach, Mechanic, Physiotherapist, or any role the team defines.
-
-**Discipline**
-Global entity - XCO, XCC, Estrada, CRI, DHI. Shared across teams.
-
-**Competition** `[ In Development ]`
-Events with date, location, and discipline. Teams register athletes into competitions.
-
-**Result** `[ In Development ]`
-Links an athlete to a competition. Stores position, finish time, points, and DNF status. Unique per athlete per competition.
-
-**Sponsor** `[ In Development ]`
-Sponsor profiles with contract dates, type (Main, Official, Technical, Local), and status.
-
-**Address**
-Reusable address entity referenced by Manager, Staff, Athlete, and Sponsor.
-
----
-
-## Security
-
-**Authentication flow:**
-
-```
+```http
 POST /api/auth/login
-      ↓
-Credentials validated against database (BCrypt comparison)
-      ↓
-JWT token generated - contains email + team_id as claims
-      ↓
-Token returned to client
-      ↓
-Client sends token on every request: Authorization: Bearer <token>
-      ↓
-JwtAuthFilter validates signature and expiration on every request
-      ↓
-team_id extracted from token - never from request body
+Content-Type: application/json
 ```
 
-**Role-based access control:**
-
-| Endpoint | MANAGER | STAFF | ATHLETE |
-|---|---|---|---|
-| `/api/auth/**` | Public | Public | Public |
-| `/api/teams/**` | Own team only | Own team only | Own team only |
-| `/api/managers/**` | Yes | No | No |
-| `/api/sponsors/**` | Yes | No | No |
-| `/api/staff-roles/**` | Yes | No | No |
-| `/api/athletes/**` | Yes | Yes | Own only |
-| `/api/staff/**` | Yes | Yes | No |
-| `/api/competitions/**` | Yes | Yes | Yes |
-| `/api/results/**` | Yes | Yes | Own only |
-
-**Team isolation:**
-Every service method filters by `team_id` extracted from the JWT token. It is impossible for an authenticated user to access or modify data from another team - the `team_id` is never trusted from the request itself.
-
----
-
-## API Endpoints
-
-### Auth
-```
-POST   /api/auth/login          Login - returns JWT token
+```json
+{
+  "email": "manager@example.com",
+  "password": "your-password"
+}
 ```
 
-### Teams
-```
-GET    /api/teams               Get authenticated manager's team
-PUT    /api/teams               Update team profile
-DELETE /api/teams               Delete team
+Successful response:
+
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiJ9..."
+}
 ```
 
-### Managers
-```
-GET    /api/managers            List managers in team
-GET    /api/managers/{id}       Get manager by id
-POST   /api/managers            Create manager
-PUT    /api/managers/{id}       Update manager
-DELETE /api/managers/{id}       Delete manager
+Use the token in later requests:
+
+```http
+Authorization: Bearer <token>
 ```
 
-### Athletes 
-```
-GET    /api/athletes            List athletes in team
-GET    /api/athletes/{id}       Get athlete by id
-POST   /api/athletes            Create athlete
-PUT    /api/athletes/{id}       Update athlete
-DELETE /api/athletes/{id}       Delete athlete
-```
+The application currently authenticates managers through `ManagerRepository`. There is no public registration endpoint yet, so an initial team and manager must exist in the database before login.
 
-### Staff `[ In Development ]`
-```
-GET    /api/staff               List staff in team
-GET    /api/staff/{id}          Get staff member by id
-POST   /api/staff               Create staff member
-PUT    /api/staff/{id}          Update staff member
-DELETE /api/staff/{id}          Delete staff member
-```
+Account creation is planned and already under development. The intended flow is a public registration endpoint that creates the first `Team` and its first `Manager` together, then returns a JWT so the new manager can start using the platform immediately.
 
-### Competitions `[ In Development ]`
-```
-GET    /api/competitions        List competitions
-GET    /api/competitions/{id}   Get competition by id
-POST   /api/competitions        Create competition
-PUT    /api/competitions/{id}   Update competition
-DELETE /api/competitions/{id}   Delete competition
-```
+## API Documentation
 
-### Results `[ In Development ]`
-```
-GET    /api/results/athlete/{athleteId}       Results by athlete
-GET    /api/results/competition/{competitionId} Results by competition
-POST   /api/results             Record result
-PUT    /api/results/{id}        Update result
-DELETE /api/results/{id}        Delete result
-```
+The full REST API reference is maintained separately in [`docs/api.html`](docs/api.html). A Markdown fallback is also available in [`docs/API.md`](docs/API.md).
 
-### Sponsors `[ In Development ]`
-```
-GET    /api/sponsors            List sponsors in team
-GET    /api/sponsors/{id}       Get sponsor by id
-POST   /api/sponsors            Create sponsor
-PUT    /api/sponsors/{id}       Update sponsor
-DELETE /api/sponsors/{id}       Delete sponsor
-```
+The README intentionally keeps only project-level information, setup instructions, and development notes so it stays easy to read.
 
-### Disciplines
-```
-GET    /api/disciplines         List all disciplines
-GET    /api/disciplines/{id}    Get discipline by id
-```
+## Getting Started
 
----
+### Requirements
 
-## Setup
+- Java 21 or newer
+- PostgreSQL 16 or compatible PostgreSQL version
+- Git
+- Maven is optional because the project includes `mvnw` and `mvnw.cmd`
 
-**Requirements:**
-- Java 21+
-- PostgreSQL 16+
-- Maven 3.9+
+### 1. Clone the Repository
 
-**1. Clone the repository**
 ```bash
 git clone https://github.com/AFaria20s/TeamSync-Backend.git
 cd TeamSync-Backend
 ```
 
-**2. Create the database**
+### 2. Create the Database
+
+Create a local PostgreSQL database:
+
 ```sql
 CREATE DATABASE teamsync;
 ```
 
-**3. Run the schema**
-```bash
-psql -U postgres -d teamsync -f schema.sql
-```
+### 3. Configure the Application
 
-**4. Seed with sample data (optional)**
-```bash
-psql -U postgres -d teamsync -f seed.sql
-```
+Copy the example configuration:
 
-**5. Configure application.properties**
 ```bash
 cp src/main/resources/application.properties.example src/main/resources/application.properties
 ```
 
-Edit `application.properties` with your database credentials and generate a JWT secret:
+Update `src/main/resources/application.properties` with your local database credentials:
+
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/teamsync
+spring.datasource.username=your_user
+spring.datasource.password=your_password
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.properties.hibernate.format_sql=true
+
+spring.application.name=teamsync
+server.port=8080
+
+jwt.secret=replace-with-a-long-random-secret-of-at-least-32-characters
+jwt.expiration=86400000
+```
+
+Generate a local JWT secret with:
+
 ```bash
 openssl rand -base64 64
 ```
 
-**6. Run**
-```bash
-mvn spring-boot:run
+### 4. Prepare the Schema
+
+The application is configured with `spring.jpa.hibernate.ddl-auto=validate`, which means Hibernate expects the database tables to already exist.
+
+For local development, if you do not already have the schema created, you can temporarily use:
+
+```properties
+spring.jpa.hibernate.ddl-auto=update
 ```
 
-The API will be available at `http://localhost:8080`.
+Start the app once so Hibernate creates or updates the tables, then switch back to `validate` when you want stricter schema checks.
 
-**Testing the login:**
+### 5. Seed an Initial Manager
+
+Login depends on an existing manager record. At minimum, the database needs:
+
+- one `team`
+- one `manager` linked to that team
+- a BCrypt password hash in `manager.password_hash`
+
+There is currently no public signup endpoint in this backend, so seed the first team and manager directly in the database or with your own SQL seed script.
+
+### 6. Run the API
+
+On Linux or macOS:
+
+```bash
+./mvnw spring-boot:run
+```
+
+On Windows:
+
+```bash
+mvnw.cmd spring-boot:run
+```
+
+The API starts on:
+
+```text
+http://localhost:8080
+```
+
+### 7. Login and Make a Request
+
+Login:
+
 ```bash
 curl -X POST http://localhost:8080/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email": "jferreira@efapel.pt", "password": "Admin1234!"}'
+  -d '{"email":"manager@example.com","password":"your-password"}'
 ```
 
----
+Use the returned token:
 
-## Stack
+```bash
+curl http://localhost:8080/api/team \
+  -H "Authorization: Bearer <token>"
+```
 
-| Layer | Technology |
-|---|---|
-| Language | Java 26 |
-| Framework | Spring Boot 4.1.1 |
-| Security | Spring Security + JWT (jjwt 0.12.6) |
-| Persistence | Spring Data JPA + Hibernate 7 |
-| Database | PostgreSQL 16 |
-| Connection Pool | HikariCP |
-| Build | Maven |
-| Utilities | Lombok, Bean Validation |
+## Development Commands
 
----
+Run the application:
 
-## Frontend
+```bash
+./mvnw spring-boot:run
+```
 
-The frontend for TeamSync is being developed separately at [TeamSync-Frontend](https://github.com/0x194/TeamSync-Frontend). `[ In Development ]`
+Run tests:
+
+```bash
+./mvnw test
+```
+
+Build the project:
+
+```bash
+./mvnw clean package
+```
+
+Run the packaged jar:
+
+```bash
+java -jar target/teamsync-0.0.1-SNAPSHOT.jar
+```
+
+## Security Notes
+
+- Keep `jwt.secret` out of version control.
+- Use a strong secret with at least 32 characters.
+- Store passwords only as BCrypt hashes.
+- Do not trust `teamId` values from request bodies for team-owned data; the backend derives the team from the authenticated manager.
+- Keep `ddl-auto=validate` outside local experimentation to avoid accidental schema changes.
+
+## Current Limitations
+
+- Manager registration is not exposed as a public API endpoint yet, but account creation is planned and already under development.
+- Role-specific authorization rules are not fine-grained yet; non-auth endpoints are protected, but most access control currently depends on authentication and service-level team scoping.
+- Some resources, such as disciplines, competitions, and addresses, are currently global rather than team-scoped.
+- The project does not currently include database migration files or seed scripts.
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
 ---
 
 <div align="center">
 
-Built by [AFaria20s](https://github.com/AFaria20s) - Computer Engineering student at UNIPVC-ESTG
+Built by [AFaria20s](https://github.com/AFaria20s)
 
 </div>
