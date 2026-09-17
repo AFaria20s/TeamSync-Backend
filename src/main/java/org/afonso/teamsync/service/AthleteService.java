@@ -24,7 +24,7 @@ public class AthleteService {
 
     public Athlete getById(UUID id, UUID teamId) {
         return athleteRepo.findByIdAndTeam_Id(id, teamId)
-                .orElseThrow(() -> new RuntimeException("Athlete not found or does not belong to your team"));
+                .orElseThrow(() -> new ResourceNotFoundException("Athlete not found or does not belong to your team"));
     }
 
     public Athlete create(AthleteRequest request, UUID teamId) {
@@ -54,6 +54,11 @@ public class AthleteService {
         athlete.setLicense(request.getLicense());
         athlete.setNationality(request.getNationality());
 
+        if (request.getName() != null) athlete.setName(request.getName());
+        if (request.getBirthDay() != null) athlete.setBirthDay(request.getBirthDay());
+        if (request.getPhone() != null) athlete.setPhone(request.getPhone());
+        if (request.getLicense() != null) athlete.setLicense(request.getLicense());
+        if (request.getNationality() != null) athlete.setNationality(request.getNationality());
         if (request.getEmail() != null) athlete.setEmail(request.getEmail());
         if (request.getPassword() != null) athlete.setPasswordHash(passwordEncoder.encode(request.getPassword()));
 
