@@ -17,3 +17,7 @@ spring.jpa.properties.hibernate.format_sql=true
 # App
 spring.application.name=teamsync
 server.port=8080
+
+# OpenAPI / Swagger UI
+springdoc.api-docs.path=/v3/api-docs
+springdoc.swagger-ui.path=/swagger-ui.html
