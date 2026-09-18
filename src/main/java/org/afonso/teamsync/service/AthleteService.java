@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.afonso.exceptions.ResourceNotFoundException;
 import org.afonso.teamsync.dto.AthleteRequest;
 import org.afonso.teamsync.entity.Athlete;
+import org.afonso.teamsync.entity.Address;
 import org.afonso.teamsync.entity.Team;
 import org.afonso.teamsync.repository.AthleteRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,7 +25,7 @@ public class AthleteService {
 
     public Athlete getById(UUID id, UUID teamId) {
         return athleteRepo.findByIdAndTeam_Id(id, teamId)
-                .orElseThrow(() -> new RuntimeException("Athlete not found or does not belong to your team"));
+                .orElseThrow(() -> new ResourceNotFoundException("Athlete not found or does not belong to your team"));
     }
 
     public Athlete create(AthleteRequest request, UUID teamId) {
@@ -36,6 +37,11 @@ public class AthleteService {
         athlete.setPhone(request.getPhone());
         athlete.setLicense(request.getLicense());
         athlete.setNationality(request.getNationality());
+        if (request.getAddressId() != null) {
+            Address address = new Address();
+            address.setId(request.getAddressId());
+            athlete.setAddress(address);
+        }
 
         Team team = new Team();
         team.setId(teamId);
@@ -54,6 +60,16 @@ public class AthleteService {
         athlete.setLicense(request.getLicense());
         athlete.setNationality(request.getNationality());
 
+        if (request.getName() != null) athlete.setName(request.getName());
+        if (request.getBirthDay() != null) athlete.setBirthDay(request.getBirthDay());
+        if (request.getPhone() != null) athlete.setPhone(request.getPhone());
+        if (request.getLicense() != null) athlete.setLicense(request.getLicense());
+        if (request.getNationality() != null) athlete.setNationality(request.getNationality());
+        if (request.getAddressId() != null) {
+            Address address = new Address();
+            address.setId(request.getAddressId());
+            athlete.setAddress(address);
+        }
         if (request.getEmail() != null) athlete.setEmail(request.getEmail());
         if (request.getPassword() != null) athlete.setPasswordHash(passwordEncoder.encode(request.getPassword()));
 
