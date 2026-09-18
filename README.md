@@ -50,6 +50,22 @@ This repository contains the backend only. The frontend is developed separately 
 | API docs | springdoc-openapi, Swagger UI |
 | Utilities | Lombok, Bean Validation |
 
+## Deployment
+
+The backend is deployed on [Render](https://render.com) using Docker.
+
+**Live API:** https://teamsync-backend-vdtx.onrender.com
+**Swagger UI:** https://teamsync-backend-vdtx.onrender.com/swagger-ui/index.html
+
+The database is hosted on [Supabase](https://supabase.com) (PostgreSQL 17).
+
+Environment variables required for deployment:
+- `DB_URL` — JDBC connection string
+- `DB_USERNAME` — database user
+- `DB_PASSWORD` — database password
+- `JWT_SECRET` — secret for signing JWT tokens
+- `JWT_EXPIRATION` — token expiration in milliseconds
+
 ## Project Structure
 
 ```text
