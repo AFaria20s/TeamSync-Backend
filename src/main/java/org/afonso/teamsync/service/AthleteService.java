@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.afonso.exceptions.ResourceNotFoundException;
 import org.afonso.teamsync.dto.AthleteRequest;
 import org.afonso.teamsync.entity.Athlete;
+import org.afonso.teamsync.entity.Address;
 import org.afonso.teamsync.entity.Team;
 import org.afonso.teamsync.repository.AthleteRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,6 +37,11 @@ public class AthleteService {
         athlete.setPhone(request.getPhone());
         athlete.setLicense(request.getLicense());
         athlete.setNationality(request.getNationality());
+        if (request.getAddressId() != null) {
+            Address address = new Address();
+            address.setId(request.getAddressId());
+            athlete.setAddress(address);
+        }
 
         Team team = new Team();
         team.setId(teamId);
@@ -59,6 +65,11 @@ public class AthleteService {
         if (request.getPhone() != null) athlete.setPhone(request.getPhone());
         if (request.getLicense() != null) athlete.setLicense(request.getLicense());
         if (request.getNationality() != null) athlete.setNationality(request.getNationality());
+        if (request.getAddressId() != null) {
+            Address address = new Address();
+            address.setId(request.getAddressId());
+            athlete.setAddress(address);
+        }
         if (request.getEmail() != null) athlete.setEmail(request.getEmail());
         if (request.getPassword() != null) athlete.setPasswordHash(passwordEncoder.encode(request.getPassword()));
 

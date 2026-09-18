@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -23,7 +24,7 @@ public class TeamService {
     }
 
     public Team update(Team team, UUID id) {
-        if(!(id==team.getId())) return null;
+        if (!Objects.equals(id, team.getId())) return null;
         return teamRepo.save(team);
     }
 
