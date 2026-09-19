@@ -13,7 +13,10 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("https://teamsync-frontend-2pc.pages.dev")
+                        .allowedOrigins(
+                                "http://localhost:3000",
+                                "https://teamsync-frontend-2pc.pages.dev"
+                        )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
