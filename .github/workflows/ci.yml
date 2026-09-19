@@ -30,7 +30,9 @@ jobs:
           cache: maven
 
       - name: Validate Maven wrapper
-        uses: skymatic/maven-wrapper-validation@v2
+        run: |
+          chmod +x mvnw
+          ./mvnw --version
 
       - name: Run unit tests
         run: ./mvnw --batch-mode --no-transfer-progress --fail-at-end test
