@@ -12,4 +12,6 @@ import java.util.UUID;
 public interface ManagerRepository extends JpaRepository<Manager, UUID> {
     Optional<Manager> findByEmail(String email);
     List<Manager> findByTeamId(UUID teamId);
+
+    boolean existsByEmail(String email);
 }

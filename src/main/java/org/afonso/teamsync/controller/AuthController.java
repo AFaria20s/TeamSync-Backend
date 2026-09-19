@@ -1,9 +1,15 @@
 package org.afonso.teamsync.controller;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.afonso.teamsync.dto.LoginRequest;
 import org.afonso.teamsync.dto.LoginResponse;
+import org.afonso.teamsync.dto.RegisterRequest;
+import org.afonso.teamsync.dto.RegisterResponse;
 import org.afonso.teamsync.security.JwtService;
+import org.afonso.teamsync.service.AuthService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +24,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
     private final JwtService jwtService;
+    private final AuthService authService;
 
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest request) {
@@ -32,5 +39,11 @@ public class AuthController {
         String token = jwtService.generateToken(user);
 
         return new LoginResponse(token);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest request) {
+        RegisterResponse response = authService.register(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
