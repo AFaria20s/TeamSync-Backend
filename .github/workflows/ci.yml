@@ -2,37 +2,49 @@ name: CI
 
 on:
   push:
-    branches: [ "*" ]
+    branches: [ master ]
   pull_request:
-    branches: [ "*" ]
+    branches: [ master ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   unit-tests:
     runs-on: ubuntu-latest
     name: Unit tests
+    timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up JDK 21
+      - name: Set up Java
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
 
+      - name: Validate Maven wrapper
+        uses: skymatic/maven-wrapper-validation@v2
+
       - name: Run unit tests
-        run: ./mvnw --batch-mode -Dtest='**/*Test.java' -DfailIfNoTests=true test
+        run: ./mvnw --batch-mode --no-transfer-progress --fail-at-end test
 
   build:
     runs-on: ubuntu-latest
     name: Build
     needs: unit-tests
+    timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up JDK 21
+      - name: Set up Java
         uses: actions/setup-java@v4
         with:
           java-version: '21'
@@ -40,4 +52,4 @@ jobs:
           cache: maven
 
       - name: Build application
-        run: ./mvnw --batch-mode package -DskipTests
+        run: ./mvnw --batch-mode --no-transfer-progress --fail-at-end package -DskipTests
