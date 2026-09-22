@@ -25,6 +25,7 @@ public class ManagerRequest {
     @Size(min = 6, message = "Password must be at least 6 characters long")
     private String password;
 
+    @Size(max = 20, message = "Phone number must be at most 20 characters")
     private String phone;
     private UUID addressId;
 }
