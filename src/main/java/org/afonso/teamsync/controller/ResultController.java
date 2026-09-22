@@ -1,5 +1,6 @@
 package org.afonso.teamsync.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.afonso.teamsync.dto.ResultRequest;
 import org.afonso.teamsync.entity.Result;
@@ -30,12 +31,12 @@ public class ResultController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Result create(@RequestBody ResultRequest request) {
+    public Result create(@Valid @RequestBody ResultRequest request) {
         return service.create(request, auth.getAuthenticatedTeamId());
     }
 
     @PutMapping("/{id}")
-    public Result update(@PathVariable UUID id, @RequestBody ResultRequest request) {
+    public Result update(@PathVariable UUID id, @Valid @RequestBody ResultRequest request) {
         return service.update(id, request, auth.getAuthenticatedTeamId());
     }
 

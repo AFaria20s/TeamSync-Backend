@@ -1,6 +1,6 @@
 package org.afonso.teamsync.controller;
 
-import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.afonso.teamsync.dto.LoginRequest;
 import org.afonso.teamsync.dto.LoginResponse;
@@ -27,7 +27,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest request) {
+    public LoginResponse login(@Valid @RequestBody LoginRequest request) {
         // check email and password
         // launch exception if invalid
         authenticationManager.authenticate(
@@ -42,7 +42,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest request) {
         RegisterResponse response = authService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

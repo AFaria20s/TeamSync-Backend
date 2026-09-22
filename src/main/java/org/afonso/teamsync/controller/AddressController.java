@@ -1,5 +1,6 @@
 package org.afonso.teamsync.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.afonso.teamsync.dto.AddressRequest;
 import org.afonso.teamsync.entity.Address;
@@ -28,12 +29,12 @@ public class AddressController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Address create(@RequestBody AddressRequest request) {
+    public Address create(@Valid @RequestBody AddressRequest request) {
         return service.create(request);
     }
 
     @PutMapping("/{id}")
-    public Address update(@PathVariable UUID id, @RequestBody AddressRequest request) {
+    public Address update(@PathVariable UUID id, @Valid @RequestBody AddressRequest request) {
         return service.update(id, request);
     }
 
