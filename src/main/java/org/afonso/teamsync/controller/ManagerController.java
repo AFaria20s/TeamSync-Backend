@@ -1,5 +1,6 @@
 package org.afonso.teamsync.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.afonso.teamsync.dto.ManagerRequest;
 import org.afonso.teamsync.entity.Manager;
@@ -24,7 +25,7 @@ public class ManagerController {
     }
 
     @PutMapping("/update")
-    public Manager updateManager(@RequestBody ManagerRequest request) {
+    public Manager updateManager(@Valid @RequestBody ManagerRequest request) {
         return managerService.update(authUtils.getAuthenticatedManager().getId(), request);
     }
 }

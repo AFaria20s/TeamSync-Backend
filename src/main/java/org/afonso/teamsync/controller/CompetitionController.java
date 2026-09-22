@@ -1,5 +1,6 @@
 package org.afonso.teamsync.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.afonso.teamsync.dto.CompetitionRequest;
 import org.afonso.teamsync.entity.Competition;
@@ -28,12 +29,12 @@ public class CompetitionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Competition create(@RequestBody CompetitionRequest request) {
+    public Competition create(@Valid @RequestBody CompetitionRequest request) {
         return service.create(request);
     }
 
     @PutMapping("/{id}")
-    public Competition update(@PathVariable UUID id, @RequestBody CompetitionRequest request) {
+    public Competition update(@PathVariable UUID id, @Valid @RequestBody CompetitionRequest request) {
         return service.update(id, request);
     }
 

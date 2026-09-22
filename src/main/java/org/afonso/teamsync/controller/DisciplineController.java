@@ -1,5 +1,6 @@
 package org.afonso.teamsync.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.afonso.teamsync.dto.DisciplineRequest;
 import org.afonso.teamsync.entity.Discipline;
@@ -28,12 +29,12 @@ public class DisciplineController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Discipline create(@RequestBody DisciplineRequest request) {
+    public Discipline create(@Valid @RequestBody DisciplineRequest request) {
         return service.create(request);
     }
 
     @PutMapping("/{id}")
-    public Discipline update(@PathVariable UUID id, @RequestBody DisciplineRequest request) {
+    public Discipline update(@PathVariable UUID id, @Valid @RequestBody DisciplineRequest request) {
         return service.update(id, request);
     }
 

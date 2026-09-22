@@ -1,5 +1,6 @@
 package org.afonso.teamsync.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.afonso.teamsync.dto.SponsorRequest;
 import org.afonso.teamsync.entity.Sponsor;
@@ -30,12 +31,12 @@ public class SponsorController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Sponsor create(@RequestBody SponsorRequest request) {
+    public Sponsor create(@Valid @RequestBody SponsorRequest request) {
         return service.create(request, auth.getAuthenticatedTeamId());
     }
 
     @PutMapping("/{id}")
-    public Sponsor update(@PathVariable UUID id, @RequestBody SponsorRequest request) {
+    public Sponsor update(@PathVariable UUID id, @Valid @RequestBody SponsorRequest request) {
         return service.update(id, request, auth.getAuthenticatedTeamId());
     }
 

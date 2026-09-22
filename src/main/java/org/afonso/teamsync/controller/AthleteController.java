@@ -1,5 +1,6 @@
 package org.afonso.teamsync.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.afonso.teamsync.dto.AthleteRequest;
 import org.afonso.teamsync.entity.Athlete;
@@ -30,12 +31,12 @@ public class AthleteController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Athlete create(@RequestBody AthleteRequest request) {
+    public Athlete create(@Valid @RequestBody AthleteRequest request) {
         return athleteService.create(request, authUtils.getAuthenticatedTeamId());
     }
 
     @PutMapping("/{id}")
-    public Athlete update(@PathVariable UUID id, @RequestBody AthleteRequest request) {
+    public Athlete update(@PathVariable UUID id, @Valid @RequestBody AthleteRequest request) {
         return athleteService.update(id, request, authUtils.getAuthenticatedTeamId());
     }
 

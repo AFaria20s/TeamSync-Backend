@@ -1,5 +1,6 @@
 package org.afonso.teamsync.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.afonso.teamsync.dto.StaffRequest;
 import org.afonso.teamsync.entity.Staff;
@@ -30,12 +31,12 @@ public class StaffController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Staff create(@RequestBody StaffRequest request) {
+    public Staff create(@Valid @RequestBody StaffRequest request) {
         return service.create(request, auth.getAuthenticatedTeamId());
     }
 
     @PutMapping("/{id}")
-    public Staff update(@PathVariable UUID id, @RequestBody StaffRequest request) {
+    public Staff update(@PathVariable UUID id, @Valid @RequestBody StaffRequest request) {
         return service.update(id, request, auth.getAuthenticatedTeamId());
     }
 

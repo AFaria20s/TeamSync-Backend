@@ -27,7 +27,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest request) {
+    public LoginResponse login(@Valid @RequestBody LoginRequest request) {
         // check email and password
         // launch exception if invalid
         authenticationManager.authenticate(
