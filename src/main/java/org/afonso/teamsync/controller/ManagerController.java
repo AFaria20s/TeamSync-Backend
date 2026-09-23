@@ -2,12 +2,12 @@ package org.afonso.teamsync.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.afonso.teamsync.dto.ManagerProfilePictureRequest;
 import org.afonso.teamsync.dto.ManagerRequest;
 import org.afonso.teamsync.dto.ManagerResponse;
 import org.afonso.teamsync.security.AuthUtils;
 import org.afonso.teamsync.service.ManagerService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -30,13 +30,13 @@ public class ManagerController {
         return managerService.update(authUtils.getAuthenticatedManager().getId(), request);
     }
 
-    @PutMapping("/profile-picture")
+    @PutMapping(value = "/profile-picture", consumes = "multipart/form-data")
     public ManagerResponse updateProfilePicture(
-            @Valid @RequestBody ManagerProfilePictureRequest request
+            @RequestPart("file") MultipartFile file
     ) {
         return managerService.updateProfilePicture(
                 authUtils.getAuthenticatedManager().getId(),
-                request
+                file
         );
     }
 
@@ -44,4 +44,5 @@ public class ManagerController {
     public ManagerResponse removeProfilePicture() {
         return managerService.removeProfilePicture(authUtils.getAuthenticatedManager().getId());
     }
+
 }

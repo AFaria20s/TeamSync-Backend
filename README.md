@@ -65,6 +65,24 @@ Environment variables required for deployment:
 - `DB_PASSWORD` — database password
 - `JWT_SECRET` — secret for signing JWT tokens
 - `JWT_EXPIRATION` — token expiration in milliseconds
+- `SUPABASE_URL` — Supabase project URL used by server-side storage uploads
+- `SUPABASE_SERVICE_ROLE_KEY` — private Supabase service-role key (server only; never expose it to the frontend)
+- `SUPABASE_STORAGE_BUCKET` — public Storage bucket used for manager profile pictures
+
+Manager profile pictures are uploaded through `PUT /api/manager/profile-picture` as
+`multipart/form-data` using the `file` field. The backend validates the image, uploads
+it to Supabase Storage, and stores the resulting public URL. The frontend must never
+receive or use the service-role key. `DELETE /api/manager/profile-picture` removes the
+stored picture.
+
+For local development, export the three Supabase variables before starting Spring
+Boot (or configure them in the IDE run environment):
+
+```bash
+export SUPABASE_URL=https://<project-ref>.supabase.co
+export SUPABASE_SERVICE_ROLE_KEY=<server-only-service-role-key>
+export SUPABASE_STORAGE_BUCKET=<public-bucket-name>
+```
 
 ## Project Structure
 
