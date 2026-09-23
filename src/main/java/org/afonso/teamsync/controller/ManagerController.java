@@ -2,8 +2,9 @@ package org.afonso.teamsync.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.afonso.teamsync.dto.ManagerProfilePictureRequest;
 import org.afonso.teamsync.dto.ManagerRequest;
-import org.afonso.teamsync.entity.Manager;
+import org.afonso.teamsync.dto.ManagerResponse;
 import org.afonso.teamsync.security.AuthUtils;
 import org.afonso.teamsync.service.ManagerService;
 import org.springframework.web.bind.annotation.*;
@@ -20,12 +21,27 @@ public class ManagerController {
     private final AuthUtils authUtils;
 
     @GetMapping
-    public Manager getManagerInfo() {
-        return managerService.getById(authUtils.getAuthenticatedManager().getId());
+    public ManagerResponse getManagerInfo() {
+        return ManagerResponse.from(managerService.getById(authUtils.getAuthenticatedManager().getId()));
     }
 
     @PutMapping("/update")
-    public Manager updateManager(@Valid @RequestBody ManagerRequest request) {
+    public ManagerResponse updateManager(@Valid @RequestBody ManagerRequest request) {
         return managerService.update(authUtils.getAuthenticatedManager().getId(), request);
+    }
+
+    @PutMapping("/profile-picture")
+    public ManagerResponse updateProfilePicture(
+            @Valid @RequestBody ManagerProfilePictureRequest request
+    ) {
+        return managerService.updateProfilePicture(
+                authUtils.getAuthenticatedManager().getId(),
+                request
+        );
+    }
+
+    @DeleteMapping("/profile-picture")
+    public ManagerResponse removeProfilePicture() {
+        return managerService.removeProfilePicture(authUtils.getAuthenticatedManager().getId());
     }
 }

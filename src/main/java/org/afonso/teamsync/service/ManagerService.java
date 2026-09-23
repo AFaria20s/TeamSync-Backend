@@ -1,7 +1,9 @@
 package org.afonso.teamsync.service;
 
 import lombok.RequiredArgsConstructor;
+import org.afonso.teamsync.dto.ManagerProfilePictureRequest;
 import org.afonso.teamsync.dto.ManagerRequest;
+import org.afonso.teamsync.dto.ManagerResponse;
 import org.afonso.teamsync.entity.Address;
 import org.afonso.teamsync.entity.Manager;
 import org.afonso.teamsync.repository.ManagerRepository;
@@ -25,7 +27,7 @@ public class ManagerService {
                 .orElseThrow(() -> new RuntimeException("Manager not found"));
     }
 
-    public Manager update(UUID id, ManagerRequest request) {
+    public ManagerResponse update(UUID id, ManagerRequest request) {
         Manager manager = getById(id);
         if (request.getName() != null) manager.setName(request.getName());
         if (request.getBirthDay() != null) manager.setBirthDay(request.getBirthDay());
@@ -39,6 +41,18 @@ public class ManagerService {
             address.setId(request.getAddressId());
             manager.setAddress(address);
         }
-        return managerRepo.save(manager);
+        return ManagerResponse.from(managerRepo.save(manager));
+    }
+
+    public ManagerResponse updateProfilePicture(UUID id, ManagerProfilePictureRequest request) {
+        Manager manager = getById(id);
+        manager.setProfilePicUrl(request.getProfilePicUrl());
+        return ManagerResponse.from(managerRepo.save(manager));
+    }
+
+    public ManagerResponse removeProfilePicture(UUID id) {
+        Manager manager = getById(id);
+        manager.setProfilePicUrl(null);
+        return ManagerResponse.from(managerRepo.save(manager));
     }
 }

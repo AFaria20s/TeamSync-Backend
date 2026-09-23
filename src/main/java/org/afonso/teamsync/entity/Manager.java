@@ -62,6 +62,9 @@ public class Manager implements UserDetails {
     @Column(name = "created_at")
     private Instant createdAt;
 
+    @Column(name = "profile_picture_url")
+    private String profilePicUrl;
+
     @PrePersist
     protected void onCreate() {
         createdAt = Instant.now();
