@@ -38,6 +38,9 @@ class AuthServiceTest {
     @Mock
     private JwtService jwtService;
 
+    @Mock
+    private EmailService emailService;
+
     @InjectMocks
     private AuthService authService;
 
@@ -48,8 +51,6 @@ class AuthServiceTest {
         when(teamRepo.save(any(Team.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(managerRepo.save(any(Manager.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(passwordEncoder.encode("plain-password")).thenReturn("encoded-password");
-        when(jwtService.generateToken(any(Manager.class))).thenReturn("jwt-token");
-
         RegisterResponse response = authService.register(request);
 
         ArgumentCaptor<Team> teamCaptor = ArgumentCaptor.forClass(Team.class);
@@ -64,9 +65,10 @@ class AuthServiceTest {
         assertThat(savedManager.getEmail()).isEqualTo("ana@example.com");
         assertThat(savedManager.getPasswordHash()).isEqualTo("encoded-password");
         assertThat(savedManager.getTeam()).isSameAs(savedTeam);
-        assertThat(response.getToken()).isEqualTo("jwt-token");
+        assertThat(response.getToken()).isEqualTo("Check your email to verify your account.");
         verify(passwordEncoder).encode("plain-password");
-        verify(jwtService).generateToken(savedManager);
+        verify(emailService).sendVerificationEmail(
+                "ana@example.com", "Ana Silva", savedManager.getVerificationToken());
     }
 
     @Test
@@ -138,7 +140,7 @@ class AuthServiceTest {
         verify(managerRepo).existsByEmail(null);
         verify(managerRepo).save(managerCaptor.capture());
         assertThat(managerCaptor.getValue().getEmail()).isNull();
-        assertThat(response.getToken()).isEqualTo("jwt-token");
+        assertThat(response.getToken()).isEqualTo("Check your email to verify your account.");
     }
 
     private RegisterRequest request(String managerName, String email, String password, String teamName) {
