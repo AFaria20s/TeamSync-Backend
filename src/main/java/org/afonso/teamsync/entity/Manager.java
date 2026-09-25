@@ -65,15 +65,6 @@ public class Manager implements UserDetails {
     @Column(name = "profile_picture_url")
     private String profilePicUrl;
 
-    @Column(name = "email_verified")
-    private Boolean emailVerified;
-
-    @Column(name = "verification_token")
-    private String verificationToken;
-
-    @Column(name = "verification_token_expires_at")
-    private Instant verificationTokenExpiresAt;
-
     @PrePersist
     protected void onCreate() {
         createdAt = Instant.now();
@@ -105,5 +96,5 @@ public class Manager implements UserDetails {
     public boolean isCredentialsNonExpired() { return true; }
 
     @Override
-    public boolean isEnabled() { return Boolean.TRUE.equals(emailVerified); }
+    public boolean isEnabled() { return true; }
 }
