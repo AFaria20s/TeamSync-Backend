@@ -132,7 +132,6 @@ class AuthServiceTest {
         when(teamRepo.save(any(Team.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(managerRepo.save(any(Manager.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(passwordEncoder.encode("plain-password")).thenReturn("encoded-password");
-        when(jwtService.generateToken(any(Manager.class))).thenReturn("jwt-token");
 
         RegisterResponse response = authService.register(request);
 
