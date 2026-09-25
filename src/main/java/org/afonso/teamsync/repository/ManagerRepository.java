@@ -14,4 +14,6 @@ public interface ManagerRepository extends JpaRepository<Manager, UUID> {
     List<Manager> findByTeamId(UUID teamId);
 
     boolean existsByEmail(String email);
+
+    Optional<Manager> findByVerificationToken(String verificationToken);
 }
